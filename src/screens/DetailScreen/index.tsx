@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, ImageBackground,
-  TouchableOpacity, Image, ActivityIndicator, Dimensions, Platform
+  TouchableOpacity, Image, ActivityIndicator, Dimensions, Platform, StatusBar
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -28,7 +28,7 @@ const DetailScreen = ({ route, navigation }: any) => {
   const [lastWatchedEp, setLastWatchedEp] = React.useState<number | null>(null);
   const [watchedEps, setWatchedEps] = React.useState<number[]>([]);
   const [isFavorite, setIsFavorite] = React.useState<boolean>(false);
-  const { themeColor, bgUrl } = React.useContext(ThemeContext);
+  const { themeColor, bgUrl, isDarkMode, colors } = React.useContext(ThemeContext);
 
   const movie = data?.data?.item;
   const cdnImage = 'https://img.ophim.live/uploads/movies'; // fallback vì detail API không kèm CDN
@@ -104,9 +104,9 @@ const DetailScreen = ({ route, navigation }: any) => {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', backgroundColor: bgUrl ? 'transparent' : '#F8F9FA' }]}>
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={themeColor || "#00B4D8"} />
-        <Text style={{ marginTop: 12, color: '#65788A', fontSize: 14 }}>Đang tải thông tin phim...</Text>
+        <Text style={{ marginTop: 12, color: colors.subText, fontSize: 14 }}>Đang tải thông tin phim...</Text>
       </View>
     );
   }
@@ -132,18 +132,19 @@ const DetailScreen = ({ route, navigation }: any) => {
       {/* 1. Header nổi trên hình nền */}
       <View style={[styles.header, { paddingTop: Math.max(insets.top, 16) }]}>
         <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={themeColor || "#02609A"} />
+          <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#FFF' : (themeColor || "#02609A")} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: themeColor || '#024D7A' }]}>Zaq</Text>
+        <Text style={[styles.headerTitle, { color: isDarkMode ? '#FFF' : (themeColor || '#024D7A') }]}>Zaq</Text>
         <View style={styles.headerRight}>
           <TouchableOpacity style={styles.headerBtn}>
-            <Ionicons name="share-social-outline" size={24} color="#1A1A1A" />
+            <Ionicons name="share-social-outline" size={24} color={isDarkMode ? '#FFF' : '#1A1A1A'} />
           </TouchableOpacity>
           {/* <Image source={{ uri: AVATAR }} style={styles.avatar} /> */}
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+      <ScrollView style={[styles.container, { backgroundColor: bgUrl ? 'transparent' : colors.background }]} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
         {/* 2. Top Banner Image */}
         <View style={styles.bannerContainer}>
           <ImageBackground
@@ -151,7 +152,7 @@ const DetailScreen = ({ route, navigation }: any) => {
             style={styles.bannerImg}
           >
             <LinearGradient
-              colors={['transparent', 'rgba(255,255,255,0.7)', '#F9FBFC']}
+              colors={['transparent', isDarkMode ? 'rgba(15,15,15,0.7)' : 'rgba(255,255,255,0.7)', colors.background]}
               locations={[0.5, 0.85, 1]}
               style={styles.bannerGradient}
             />
@@ -167,8 +168,8 @@ const DetailScreen = ({ route, navigation }: any) => {
         <View style={styles.contentWrap}>
           <View style={styles.tagsRow}>
             {tags.map((tag, idx) => (
-              <View key={idx} style={styles.tagBadge}>
-                <Text style={styles.tagText}>{tag}</Text>
+              <View key={idx} style={[styles.tagBadge, { backgroundColor: isDarkMode ? '#1A1A1A' : '#E4EAEC' }]}>
+                <Text style={[styles.tagText, { color: isDarkMode ? '#FFF' : '#4A5568' }]}>{tag}</Text>
               </View>
             ))}
           </View>
@@ -189,7 +190,7 @@ const DetailScreen = ({ route, navigation }: any) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.btnAddList, isFavorite && { borderColor: themeColor, backgroundColor: '#EAF1F8' }]}
+            style={[styles.btnAddList, isFavorite && { borderColor: themeColor, backgroundColor: isDarkMode ? '#1A1A1A' : '#EAF1F8' }, { backgroundColor: colors.card, borderColor: colors.border }]}
             onPress={toggleFavorite}
           >
             <Ionicons
@@ -206,7 +207,7 @@ const DetailScreen = ({ route, navigation }: any) => {
           {/* Episode Selection */}
           {movie.episodes && movie.episodes[0]?.server_data && movie.episodes[0].server_data.length > 1 && (
             <View style={styles.episodeSection}>
-              <Text style={styles.episodeTitle}>Chọn tập phim</Text>
+              <Text style={[styles.episodeTitle, { color: colors.text }]}>Chọn tập phim</Text>
               <View style={styles.episodeList}>
                 {movie.episodes[0].server_data.map((ep: any, index: number) => {
                   const isWatched = watchedEps.includes(index);
@@ -217,15 +218,15 @@ const DetailScreen = ({ route, navigation }: any) => {
                       style={[
                         styles.episodeBtn,
                         isWatched && { backgroundColor: themeColor, opacity: 0.8 },
-                        isActive && { backgroundColor: themeColor, borderWidth: 2, borderColor: '#FFF' },
-                        (!isWatched && !isActive) && { backgroundColor: '#E4EAEC' }
+                        isActive && { backgroundColor: themeColor, borderWidth: 2, borderColor: colors.itemText },
+                        (!isWatched && !isActive) && { backgroundColor: colors.card }
                       ]}
                       onPress={() => handlePlay(index)}
                     >
                       <Text style={[
                         styles.episodeBtnText,
-                        (isWatched || isActive) && { color: '#FFF' },
-                        (!isWatched && !isActive) && { color: themeColor }
+                        (isWatched || isActive) && { color: colors.itemText },
+                        (!isWatched && !isActive) && { color: isDarkMode ? colors.itemSubText : themeColor }
                       ]}>
                         {ep.name.replace(/^Tập\s+/i, '')}
                       </Text>
@@ -237,23 +238,23 @@ const DetailScreen = ({ route, navigation }: any) => {
           )}
 
           {/* 4. Info Cards */}
-          <View style={styles.infoCard}>
-            <Text style={styles.infoTitle}>Tóm tắt nội dung</Text>
-            <Text style={styles.infoDesc}>{cleanContent}</Text>
+          <View style={[styles.infoCard, { backgroundColor: colors.card }]}>
+            <Text style={[styles.infoTitle, { color: colors.itemText }]}>Tóm tắt nội dung</Text>
+            <Text style={[styles.infoDesc, { color: colors.itemSubText }]}>{cleanContent}</Text>
           </View>
 
-          <View style={styles.infoCardSmall}>
+          <View style={[styles.infoCardSmall, { backgroundColor: colors.card }]}>
             <Text style={styles.infoTitleGray}>ĐẠO DIỄN</Text>
-            <Text style={styles.infoValueBlue}>
+            <Text style={[styles.infoValueBlue, { color: themeColor || '#02609A' }]}>
               {movie.director && movie.director.length > 0 && movie.director[0] !== ''
                 ? movie.director.join(', ')
                 : 'Đang cập nhật'}
             </Text>
           </View>
 
-          <View style={styles.infoCardSmall}>
+          <View style={[styles.infoCardSmall, { backgroundColor: colors.card }]}>
             <Text style={styles.infoTitleGray}>DIỄN VIÊN CHÍNH</Text>
-            <Text style={styles.infoValueGray}>
+            <Text style={[styles.infoValueGray, { color: colors.itemSubText }]}>
               {movie.actor && movie.actor.length > 0 && movie.actor[0] !== ''
                 ? movie.actor.join(', ')
                 : 'Đang cập nhật'}

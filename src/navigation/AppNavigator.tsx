@@ -62,8 +62,8 @@ const AppNavigator = () => {
     if (bgUrl === 'local-warrior-pink') bgSource = require('../assets/images/custom-bg-4.jpg');
 
     return (
-      <ImageBackground source={bgSource} style={{ flex: 1 }} blurRadius={2}>
-        <View style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.45)' }}>
+      <ImageBackground source={bgSource} style={{ flex: 1 }} blurRadius={5}>
+        <View style={{ flex: 1 }}>
           {navContent}
         </View>
       </ImageBackground>

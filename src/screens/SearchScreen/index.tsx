@@ -20,11 +20,11 @@ const getImageUrl = (cdnBase: string, path: string) => {
 const SearchScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
   const [keyword, setKeyword] = useState('');
-  const { themeColor, bgUrl } = React.useContext(ThemeContext);
-  
+  const { themeColor, bgUrl, isDarkMode, colors } = React.useContext(ThemeContext);
+
   // Debounce 500ms: giảm số lần request khi người dùng đang gõ
   const debouncedKeyword = useDebounce(keyword, 500);
-  
+
   const { data, isLoading } = useSearchMovies(debouncedKeyword);
 
   const cdnImage = data?.data?.APP_DOMAIN_CDN_IMAGE || 'https://img.ophim.live';
@@ -35,45 +35,45 @@ const SearchScreen = ({ navigation }: any) => {
   };
 
   const renderItem = ({ item }: { item: MovieItem }) => (
-    <TouchableOpacity 
-      style={styles.resultCard} 
+    <TouchableOpacity
+      style={[styles.resultCard, { backgroundColor: colors.card }]} 
       activeOpacity={0.8}
       onPress={() => navigation.navigate('Detail', { slug: item.slug })}
     >
-      <Image 
-        source={{ uri: getImageUrl(cdnImage, item.thumb_url || item.poster_url) }} 
-        style={styles.movieImg} 
+      <Image
+        source={{ uri: getImageUrl(cdnImage, item.thumb_url || item.poster_url) }}
+        style={styles.movieImg}
       />
       <View style={styles.movieInfo}>
-        <Text style={styles.movieTitle} numberOfLines={2}>{item.name}</Text>
-        <Text style={styles.movieOrigin} numberOfLines={1}>{item.origin_name}</Text>
+        <Text style={[styles.movieTitle, { color: colors.itemText }]} numberOfLines={2}>{item.name}</Text>
+        <Text style={[styles.movieOrigin, { color: colors.itemSubText }]} numberOfLines={1}>{item.origin_name}</Text>
         <View style={styles.movieTags}>
-          <Text style={[styles.tagText, { color: themeColor || '#02609A' }]}>{item.year || 'N/A'}</Text>
-          <Text style={styles.tagDot}>•</Text>
-          <Text style={[styles.tagText, { color: themeColor || '#02609A' }]}>{item.quality || 'HD'}</Text>
+          <Text style={[styles.tagText, { color: themeColor || '#02609A', backgroundColor: isDarkMode ? '#1A1A1A' : '#EAF1F8' }]}>{item.year || 'N/A'}</Text>
+          <Text style={[styles.tagDot, { color: isDarkMode ? '#555' : '#CBD5E1' }]}>•</Text>
+          <Text style={[styles.tagText, { color: themeColor || '#02609A', backgroundColor: isDarkMode ? '#1A1A1A' : '#EAF1F8' }]}>{item.quality || 'HD'}</Text>
         </View>
       </View>
-      <Ionicons name="chevron-forward" size={20} color="#CBD5E1" />
+      <Ionicons name="chevron-forward" size={20} color={isDarkMode ? '#555' : "#CBD5E1"} />
     </TouchableOpacity>
   );
 
   return (
-    <KeyboardAvoidingView 
-      style={[styles.container, { backgroundColor: bgUrl ? 'transparent' : '#F9FBFC' }]} 
+    <KeyboardAvoidingView
+      style={[styles.container, { backgroundColor: bgUrl ? 'transparent' : colors.background }]} 
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       {/* Header Search Bar */}
-      <View style={[styles.header, { paddingTop: Math.max(insets.top, 16), backgroundColor: bgUrl ? 'rgba(255,255,255,0.85)' : '#FFF' }]}>
+      <View style={[styles.header, { paddingTop: Math.max(insets.top, 16), backgroundColor: colors.headerSearch || '#1A1A1A' }]}>
         <TouchableOpacity style={styles.btnBack} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+          <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#FFF' : '#1A1A1A'} />
         </TouchableOpacity>
-        
-        <View style={styles.searchBox}>
-          <Ionicons name="search" size={20} color="#94A3B8" style={styles.searchIcon} />
+
+        <View style={[styles.searchBox, { backgroundColor: isDarkMode ? '#222' : '#F1F5F9' }]}>
+          <Ionicons name="search" size={20} color={isDarkMode ? '#666' : "#94A3B8"} style={styles.searchIcon} />
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: colors.itemText }]}
             placeholder="Tìm kiếm phim, diễn viên..."
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={isDarkMode ? '#555' : "#94A3B8"}
             value={keyword}
             onChangeText={setKeyword}
             autoFocus
@@ -81,7 +81,7 @@ const SearchScreen = ({ navigation }: any) => {
           />
           {keyword.length > 0 && (
             <TouchableOpacity onPress={handleClear} style={styles.btnClear}>
-              <Ionicons name="close-circle" size={20} color="#CBD5E1" />
+              <Ionicons name="close-circle" size={20} color={isDarkMode ? '#444' : '#CBD5E1'} />
             </TouchableOpacity>
           )}
         </View>
@@ -92,18 +92,18 @@ const SearchScreen = ({ navigation }: any) => {
         {isLoading ? (
           <View style={styles.centerBox}>
             <ActivityIndicator size="large" color={themeColor || "#02609A"} />
-            <Text style={styles.infoText}>Đang tìm kiếm...</Text>
+            <Text style={[styles.infoText, { color: colors.subText }]}>Đang tìm kiếm...</Text>
           </View>
         ) : debouncedKeyword.length === 0 ? (
           <View style={styles.centerBox}>
-            <Ionicons name="search-outline" size={60} color="#E2E8F0" />
-            <Text style={styles.placeholderText}>Nhập tên phim để bắt đầu tìm kiếm</Text>
+            <Ionicons name="search-outline" size={60} color={isDarkMode ? '#DDD' : "#E2E8F0"} />
+            <Text style={[styles.placeholderText, { color: colors.subText }]}>Nhập tên phim để bắt đầu tìm kiếm</Text>
           </View>
         ) : movies.length === 0 ? (
           <View style={styles.centerBox}>
-            <Ionicons name="file-tray-outline" size={60} color="#E2E8F0" />
-            <Text style={styles.infoText}>Không tìm thấy phim nào phù hợp</Text>
-            <Text style={styles.placeholderText}>Thử lại với từ khóa khác</Text>
+            <Ionicons name="file-tray-outline" size={60} color={isDarkMode ? '#333' : "#E2E8F0"} />
+            <Text style={[styles.infoText, { color: colors.subText }]}>Không tìm thấy phim nào phù hợp</Text>
+            <Text style={[styles.placeholderText, { color: colors.subText }]}>Thử lại với từ khóa khác</Text>
           </View>
         ) : (
           <FlatList

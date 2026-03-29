@@ -19,9 +19,9 @@ const getImageUrl = (cdnBase: string, path: string) => {
 const CategoryScreen = ({ route, navigation }: any) => {
   const { slug, name } = route.params;
   const insets = useSafeAreaInsets();
-  const { themeColor, bgUrl } = React.useContext(ThemeContext);
+  const { themeColor, bgUrl, isDarkMode, colors } = React.useContext(ThemeContext);
   const [searchKeyword, setSearchKeyword] = useState('');
-  
+
   const { data, isLoading } = useGetMoviesByCategory(slug);
 
   const cdnImage = data?.data?.APP_DOMAIN_CDN_IMAGE || 'https://img.ophim.live';
@@ -29,60 +29,60 @@ const CategoryScreen = ({ route, navigation }: any) => {
 
   const filteredMovies = useMemo(() => {
     if (!searchKeyword.trim()) return movies;
-    return movies.filter((m: MovieItem) => 
-      m.name.toLowerCase().includes(searchKeyword.toLowerCase()) || 
+    return movies.filter((m: MovieItem) =>
+      m.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
       m.origin_name.toLowerCase().includes(searchKeyword.toLowerCase())
     );
   }, [movies, searchKeyword]);
 
   const renderItem = ({ item }: { item: MovieItem }) => (
-    <TouchableOpacity 
-      style={styles.resultCard} 
+    <TouchableOpacity
+      style={[styles.resultCard, { backgroundColor: colors.card }]} 
       activeOpacity={0.8}
       onPress={() => navigation.navigate('Detail', { slug: item.slug })}
     >
-      <Image 
-        source={{ uri: getImageUrl(cdnImage, item.thumb_url || item.poster_url) }} 
-        style={styles.movieImg} 
+      <Image
+        source={{ uri: getImageUrl(cdnImage, item.thumb_url || item.poster_url) }}
+        style={styles.movieImg}
       />
       <View style={styles.movieInfo}>
-        <Text style={styles.movieTitle} numberOfLines={2}>{item.name}</Text>
-        <Text style={styles.movieOrigin} numberOfLines={1}>{item.origin_name}</Text>
+        <Text style={[styles.movieTitle, { color: colors.itemText }]} numberOfLines={2}>{item.name}</Text>
+        <Text style={[styles.movieOrigin, { color: colors.itemSubText }]} numberOfLines={1}>{item.origin_name}</Text>
         <View style={styles.movieTags}>
-          <Text style={[styles.tagText, { color: themeColor || '#02609A' }]}>{item.year || 'N/A'}</Text>
-          <Text style={styles.tagDot}>•</Text>
-          <Text style={[styles.tagText, { color: themeColor || '#02609A' }]}>{item.quality || 'HD'}</Text>
+          <Text style={[styles.tagText, { color: themeColor || '#02609A', backgroundColor: isDarkMode ? '#1A1A1A' : '#F1F5F9' }]}>{item.year || 'N/A'}</Text>
+          <Text style={[styles.tagDot, { color: isDarkMode ? '#555' : '#CBD5E1' }]}>•</Text>
+          <Text style={[styles.tagText, { color: themeColor || '#02609A', backgroundColor: isDarkMode ? '#1A1A1A' : '#F1F5F9' }]}>{item.quality || 'HD'}</Text>
         </View>
       </View>
-      <Ionicons name="chevron-forward" size={20} color="#CBD5E1" />
+      <Ionicons name="chevron-forward" size={20} color={isDarkMode ? '#555' : "#CBD5E1"} />
     </TouchableOpacity>
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: bgUrl ? 'transparent' : '#F9FBFC' }]}>
+    <View style={[styles.container, { backgroundColor: bgUrl ? 'transparent' : colors.background }]}>
       {/* Header */}
-      <View style={[styles.header, { paddingTop: Math.max(insets.top, 16), backgroundColor: bgUrl ? 'rgba(255,255,255,0.85)' : '#FFF' }]}>
+      <View style={[styles.header, { paddingTop: Math.max(insets.top, 16), backgroundColor: colors.headerSearch || '#1A1A1A' }]}>
         <TouchableOpacity style={styles.btnBack} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+          <Ionicons name="arrow-back" size={24} color={isDarkMode ? '#FFF' : '#1A1A1A'} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Thể loại: {name}</Text>
+        <Text style={[styles.headerTitle, { color: isDarkMode ? '#FFF' : '#1A1A1A' }]}>Thể loại: {name}</Text>
         <View style={{ width: 40 }} />
       </View>
 
       {/* Search Bar within Category */}
       <View style={styles.searchSection}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color="#94A3B8" style={{ marginRight: 10 }} />
+        <View style={[styles.searchBar, { backgroundColor: isDarkMode ? '#1A1A1A' : 'rgba(255,255,255,0.95)' }]}>
+          <Ionicons name="search" size={20} color={isDarkMode ? '#666' : "#94A3B8"} style={{ marginRight: 10 }} />
           <TextInput 
-            style={styles.searchInput}
+            style={[styles.searchInput, { color: colors.itemText }]}
             placeholder={`Tìm kiếm phim ${name}...`}
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={isDarkMode ? '#555' : "#94A3B8"}
             value={searchKeyword}
             onChangeText={setSearchKeyword}
           />
           {searchKeyword.length > 0 && (
             <TouchableOpacity onPress={() => setSearchKeyword('')}>
-              <Ionicons name="close-circle" size={20} color="#CBD5E1" />
+              <Ionicons name="close-circle" size={20} color={isDarkMode ? '#444' : '#CBD5E1'} />
             </TouchableOpacity>
           )}
         </View>
@@ -93,13 +93,13 @@ const CategoryScreen = ({ route, navigation }: any) => {
         {isLoading ? (
           <View style={styles.centerBox}>
             <ActivityIndicator size="large" color={themeColor || "#02609A"} />
-            <Text style={styles.infoText}>Đang tải danh sách phim...</Text>
+            <Text style={[styles.infoText, { color: colors.subText }]}>Đang tải danh sách phim...</Text>
           </View>
         ) : filteredMovies.length === 0 ? (
           <View style={styles.centerBox}>
-            <Ionicons name="search-outline" size={60} color="#E2E8F0" />
-            <Text style={styles.infoText}>
-                {searchKeyword ? `Không tìm thấy phim "${searchKeyword}"` : 'Chưa có phim nào ở thể loại này'}
+            <Ionicons name="search-outline" size={60} color={isDarkMode ? '#DDD' : "#E2E8F0"} />
+            <Text style={[styles.infoText, { color: colors.subText }]}>
+              {searchKeyword ? `Không tìm thấy phim "${searchKeyword}"` : 'Chưa có phim nào ở thể loại này'}
             </Text>
           </View>
         ) : (

@@ -13,20 +13,20 @@ const MockScreen = () => <View style={{ flex: 1, backgroundColor: '#FFF' }} />;
 type IconName = 'home' | 'home-outline' | 'heart' | 'heart-outline' | 'person-circle' | 'person-circle-outline';
 
 export default function TabNavigator() {
-  const { themeColor } = React.useContext(ThemeContext);
+  const { themeColor, colors, isDarkMode } = React.useContext(ThemeContext);
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: themeColor || '#02609A',
-        tabBarInactiveTintColor: '#8B9BA9',
+        tabBarActiveTintColor: themeColor || '#00B4D8',
+        tabBarInactiveTintColor: isDarkMode ? 'rgba(255,255,255,0.4)' : '#8B9BA9',
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '600',
           marginTop: 2,
         },
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [styles.tabBar, { backgroundColor: colors.tabBar || '#FFFFFF' }],
         tabBarItemStyle: styles.tabBarItem,
       }}
     >
@@ -80,7 +80,6 @@ export default function TabNavigator() {
 const styles = StyleSheet.create({
   tabBar: {
     height: Platform.OS === 'ios' ? 90 : 70,
-    backgroundColor: '#FFFFFF',
     borderTopWidth: 0,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,

@@ -41,7 +41,7 @@ const HomeScreen = ({ navigation }: any) => {
   const movies = data?.data?.items || [];
   const [history, setHistory] = useState<any[]>([]);
   const [favorites, setFavorites] = useState<any[]>([]);
-  const { themeColor, bgUrl } = React.useContext(ThemeContext);
+  const { themeColor, bgUrl, isDarkMode, colors } = React.useContext(ThemeContext);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -88,7 +88,7 @@ const HomeScreen = ({ navigation }: any) => {
     );
   }
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: bgUrl ? 'transparent' : '#F8F9FA' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: bgUrl ? 'transparent' : colors.background }]}>
       {/* Top Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
@@ -99,8 +99,8 @@ const HomeScreen = ({ navigation }: any) => {
           </View>
         </View>
         <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.searchBtn} onPress={() => navigation.navigate('Search')}>
-            <Ionicons name="search-outline" size={24} color="#1A1A1A" />
+          <TouchableOpacity style={[styles.searchBtn, { backgroundColor: colors.headerSearch, padding: 8, borderRadius: 10 }]} onPress={() => navigation.navigate('Search')}>
+            <Ionicons name="search-outline" size={24} color={isDarkMode ? '#FFF' : '#1A1A1A'} />
           </TouchableOpacity>
           {/* <Image source={{ uri: AVATAR }} style={styles.avatar} /> */}
         </View>
@@ -171,7 +171,7 @@ const HomeScreen = ({ navigation }: any) => {
                       style={styles.carouselImg}
                     />
                   </TouchableOpacity>
-                  <Text style={styles.carouselTitle} numberOfLines={1}>
+                  <Text style={[styles.carouselTitle, { color: colors.text }]} numberOfLines={1}>
                     {item.name}
                   </Text>
                 </Animated.View>
@@ -200,7 +200,7 @@ const HomeScreen = ({ navigation }: any) => {
           <>
             <View style={styles.sectionHeader}>
               <View>
-                <Text style={styles.sectionTitle}>Tiếp tục xem</Text>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>Tiếp tục xem</Text>
                 <View style={[styles.titleUnderline, { backgroundColor: themeColor, width: 40 }]} />
               </View>
             </View>
@@ -210,7 +210,7 @@ const HomeScreen = ({ navigation }: any) => {
                 return (
                   <TouchableOpacity
                     key={index}
-                    style={[styles.historyCard, index === 0 && { marginLeft: 20 }]}
+                    style={[styles.historyCard, index === 0 && { marginLeft: 20 }, { backgroundColor: colors.card, padding: 10, borderRadius: 16 }]}
                     onPress={() => navigation.navigate('Player', { slug: item.slug, epIndex: item.epIndex })}
                   >
                     <Image
@@ -220,8 +220,8 @@ const HomeScreen = ({ navigation }: any) => {
                     <View style={styles.historyProgressBg}>
                       <View style={[styles.historyProgressFill, { width: `${progressPercent}%`, backgroundColor: themeColor }]} />
                     </View>
-                    <Text style={styles.watchedTitle} numberOfLines={1}>{item.name}</Text>
-                    <Text style={styles.watchedTimeStr} numberOfLines={1}>
+                    <Text style={[styles.watchedTitle, { color: colors.itemText }]} numberOfLines={1}>{item.name}</Text>
+                    <Text style={[styles.watchedTimeStr, { color: colors.itemSubText }]} numberOfLines={1}>
                       Đang xem Tập {parseInt(item.epIndex) + 1 || 1}
                     </Text>
                   </TouchableOpacity>
@@ -236,23 +236,23 @@ const HomeScreen = ({ navigation }: any) => {
           <>
             <View style={styles.sectionHeader}>
               <View>
-                <Text style={styles.sectionTitle}>Danh sách phim của bạn</Text>
-                <View style={[styles.titleUnderline, { backgroundColor: '#E53E3E', width: 40 }]} />
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>Danh sách phim của bạn</Text>
+                <View style={[styles.titleUnderline, { backgroundColor: '#FF6B6B', width: 40 }]} />
               </View>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hList}>
               {favorites.map((item: any, index: number) => (
-                <TouchableOpacity
-                  key={item.slug}
-                  style={[styles.watchedCard, index === 0 && { marginLeft: 20 }]}
+                <TouchableOpacity 
+                  key={item.slug} 
+                  style={[styles.watchedCard, index === 0 && { marginLeft: 20 }, { backgroundColor: colors.card, padding: 8, borderRadius: 16 }]} 
                   onPress={() => navigation.navigate('Detail', { slug: item.slug })}
                 >
                   <Image
                     source={{ uri: getImageUrl(cdnImage, item.thumb_url) }}
                     style={styles.watchedImg}
                   />
-                  <Text style={styles.watchedTitle} numberOfLines={1}>{item.name}</Text>
-                  <Text style={styles.watchedTimeStr} numberOfLines={1}>Đã lưu</Text>
+                  <Text style={[styles.watchedTitle, { color: colors.itemText }]} numberOfLines={1}>{item.name}</Text>
+                  <Text style={[styles.watchedTimeStr, { color: colors.itemSubText }]} numberOfLines={1}>Đã lưu</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -262,7 +262,7 @@ const HomeScreen = ({ navigation }: any) => {
         {/* 2. Phim Mới Cập Nhật */}
         <View style={styles.sectionHeader}>
           <View>
-            <Text style={styles.sectionTitle}>Phim Mới Cập Nhật</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Phim Mới Cập Nhật</Text>
             <View style={[styles.titleUnderline, { backgroundColor: themeColor }]} />
           </View>
           <TouchableOpacity>
@@ -272,17 +272,17 @@ const HomeScreen = ({ navigation }: any) => {
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hList}>
           {recentMovies.map((item: MovieItem, index: number) => (
-            <TouchableOpacity
-              key={item._id}
-              style={[styles.watchedCard, index === 0 && { marginLeft: 20 }]}
+            <TouchableOpacity 
+              key={item._id} 
+              style={[styles.watchedCard, index === 0 && { marginLeft: 20 }, { backgroundColor: colors.card, padding: 8, borderRadius: 16 }]} 
               onPress={() => navigation.navigate('Detail', { slug: item.slug })}
             >
               <Image
                 source={{ uri: getImageUrl(cdnImage, item.thumb_url) }}
                 style={styles.watchedImg}
               />
-              <Text style={styles.watchedTitle} numberOfLines={1}>{item.name}</Text>
-              <Text style={styles.watchedTimeStr} numberOfLines={1}>
+              <Text style={[styles.watchedTitle, { color: colors.itemText }]} numberOfLines={1}>{item.name}</Text>
+              <Text style={[styles.watchedTimeStr, { color: colors.itemSubText }]} numberOfLines={1}>
                 {item.episode_current} • {item.quality}
               </Text>
             </TouchableOpacity>
@@ -292,12 +292,12 @@ const HomeScreen = ({ navigation }: any) => {
         {/* 3. Phim Hot */}
         <View style={[styles.sectionHeader, { marginTop: 32 }]}>
           <View>
-            <Text style={styles.sectionTitle}>Phim Hot</Text>
-            <Text style={styles.sectionSubtitle}>Đang thịnh hành tuần này</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Phim Hot</Text>
+            <Text style={[styles.sectionSubtitle, { color: colors.subText }]}>Đang thịnh hành tuần này</Text>
           </View>
           <View style={styles.arrowControls}>
-            <TouchableOpacity style={styles.arrowBtn}><Text style={styles.arrowText}>{'←'}</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.arrowBtn}><Text style={styles.arrowText}>{'→'}</Text></TouchableOpacity>
+            <TouchableOpacity style={[styles.arrowBtn, { backgroundColor: colors.headerSearch }]}><Ionicons name="arrow-back" size={16} color={themeColor} /></TouchableOpacity>
+            <TouchableOpacity style={[styles.arrowBtn, { backgroundColor: colors.headerSearch }]}><Ionicons name="arrow-forward" size={16} color={themeColor} /></TouchableOpacity>
           </View>
         </View>
 
@@ -318,20 +318,20 @@ const HomeScreen = ({ navigation }: any) => {
                 </View>
                 <LinearGradient colors={['transparent', 'rgba(0,0,0,0.6)']} style={styles.hotGradientBottom} />
               </ImageBackground>
-              <Text style={styles.hotTitle} numberOfLines={1}>{item.name}</Text>
+              <Text style={[styles.hotTitle, { color: colors.itemText }]} numberOfLines={1}>{item.name}</Text>
               <View style={styles.hotMeta}>
                 <Text style={styles.hotMetaStar}>⭐</Text>
-                <Text style={styles.hotMetaRating}>
+                <Text style={[styles.hotMetaRating, { color: colors.itemText }]}>
                   {item.tmdb?.vote_average ? item.tmdb.vote_average.toFixed(1) : 'N/A'}
                 </Text>
-                <Text style={styles.hotMetaYear}> • {item.year}</Text>
+                <Text style={[styles.hotMetaYear, { color: colors.itemSubText }]}> • {item.year}</Text>
               </View>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
         <View style={[styles.sectionHeader, { marginTop: 32, marginBottom: 16 }]}>
-          <Text style={styles.sectionTitle}>Khám phá theo thể loại</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Khám phá theo thể loại</Text>
         </View>
         <View style={styles.catGrid}>
           {[
@@ -342,12 +342,12 @@ const HomeScreen = ({ navigation }: any) => {
           ].map(cat => (
             <TouchableOpacity
               key={cat.slug}
-              style={[styles.catItem, { backgroundColor: bgUrl ? 'rgba(255,255,255,0.85)' : cat.bg }]}
+              style={[styles.catItem, { backgroundColor: colors.card, paddingVertical: 14 }]}
               activeOpacity={0.7}
               onPress={() => navigation.navigate('Category', { slug: cat.slug, name: cat.name })}
             >
-              <Ionicons name={cat.icon} size={22} color={cat.color} style={{ marginRight: 12 }} />
-              <Text style={[styles.catTitle, { color: '#0F172A' }]}>{cat.name}</Text>
+              <Ionicons name={cat.icon} size={22} color={themeColor} style={{ marginRight: 12 }} />
+              <Text style={[styles.catTitle, { color: colors.itemText }]}>{cat.name}</Text>
             </TouchableOpacity>
           ))}
         </View>

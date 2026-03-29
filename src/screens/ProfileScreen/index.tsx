@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, ScrollView, SafeAreaView, Platform, Switch } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ThemeContext } from '../../context/ThemeContext';
 
@@ -18,26 +18,38 @@ const BACKGROUNDS = [
   { id: 'custom2', url: 'local-galaxy-cat', name: 'Chiikawa friends', source: require('../../assets/images/custom-bg-2.jpg') },
   { id: 'custom3', url: 'local-candy-pink', name: 'Chiikawa', source: require('../../assets/images/custom-bg-3.jpg') },
   { id: 'custom4', url: 'local-warrior-pink', name: 'Pink Chii', source: require('../../assets/images/custom-bg-4.jpg') },
-  // { id: 'bg1', url: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop', name: 'Rạp xiếc Bóng tối' },
-  // { id: 'bg2', url: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=600&auto=format&fit=crop', name: 'Rạp chiếu phim' },
-  // { id: 'bg3', url: 'https://images.unsplash.com/photo-1518929468119-e5bf444c30f4?q=80&w=600&auto=format&fit=crop', name: 'Blue Abstract' },
   { id: 'bg4', url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=600&auto=format&fit=crop', name: 'Gradient Color' },
 ];
 
 export default function ProfileScreen() {
-  const { themeColor, changeThemeColor, bgUrl, changeBgUrl } = useContext(ThemeContext);
+  const { themeColor, changeThemeColor, bgUrl, changeBgUrl, isDarkMode, toggleDarkMode, colors } = useContext(ThemeContext);
 
   const renderContent = () => (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
         <Ionicons name="person-circle" size={100} color={themeColor} />
-        <Text style={[styles.userName, { color: themeColor }]}>My Profile</Text>
+        <Text style={[styles.userName, { color: isDarkMode ? colors.itemText : themeColor }]}>My Profile</Text>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Đổi Màu Theme</Text>
+      <View style={[styles.section, { backgroundColor: colors.card }]}>
+        <View style={styles.rowBetween}>
+          <View style={styles.row}>
+            <Ionicons name={isDarkMode ? "moon" : "sunny"} size={24} color={themeColor} style={{ marginRight: 12 }} />
+            <Text style={[styles.sectionTitle, { marginBottom: 0, color: colors.itemText }]}>Chế độ tối</Text>
+          </View>
+          <Switch
+            value={isDarkMode}
+            onValueChange={toggleDarkMode}
+            trackColor={{ false: '#767577', true: themeColor }}
+            thumbColor={isDarkMode ? '#FFF' : '#f4f3f4'}
+          />
+        </View>
+      </View>
+
+      <View style={[styles.section, { backgroundColor: colors.card }]}>
+        <Text style={[styles.sectionTitle, { color: colors.itemText }]}>Đổi Màu Theme</Text>
         <View style={styles.colorRow}>
-          {THEME_COLORS.map(color => (
+          {THEME_COLORS.map((color) => (
             <TouchableOpacity
               key={color}
               style={[
@@ -47,37 +59,37 @@ export default function ProfileScreen() {
               ]}
               onPress={() => changeThemeColor(color)}
             >
-              {themeColor === color && <Ionicons name="checkmark" size={24} color="#FFF" />}
+              {themeColor === color && <Ionicons name="checkmark" size={Platform.OS === 'android' ? 28 : 24} color="#FFF" />}
             </TouchableOpacity>
           ))}
         </View>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Đổi Hình Nền (Background Wallpaper)</Text>
+      <View style={[styles.section, { backgroundColor: colors.card }]}>
+        <Text style={[styles.sectionTitle, { color: colors.itemText }]}>Đổi Hình Nền</Text>
         {BACKGROUNDS.map(bg => (
           <TouchableOpacity
             key={bg.id}
             style={[styles.bgCard, bgUrl === bg.url && { borderColor: themeColor, borderWidth: 2 }]}
             onPress={() => changeBgUrl(bg.url)}
-            activeOpacity={0.8}
+            activeOpacity={0.7}
           >
             {bg.url ? (
               <ImageBackground
                 source={bg.url.startsWith('local-') ? bg.source : { uri: bg.url }}
                 style={styles.bgPreview}
-                imageStyle={{ borderRadius: 8 }}
+                imageStyle={{ borderRadius: 12 }}
               >
-                <View style={[styles.bgOverlay, bg.url.startsWith('local-') && { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+                <View style={[styles.bgOverlay, bg.url.startsWith('local-') && { backgroundColor: 'rgba(0,0,0,0.4)' }]}>
                   <Text style={styles.bgName}>{bg.name}</Text>
-                  {bgUrl === bg.url && <Ionicons name="checkmark-circle" size={24} color={themeColor} />}
+                  {bgUrl === bg.url && <Ionicons name="checkmark-circle" size={26} color={themeColor} />}
                 </View>
               </ImageBackground>
             ) : (
-              <View style={[styles.bgPreview, { backgroundColor: '#1A1A1A', borderRadius: 8 }]}>
+              <View style={[styles.bgPreview, { backgroundColor: '#1A1A1A', borderRadius: 12 }]}>
                 <View style={[styles.bgOverlay, { backgroundColor: 'transparent' }]}>
                   <Text style={styles.bgName}>{bg.name}</Text>
-                  {bgUrl === bg.url && <Ionicons name="checkmark-circle" size={24} color={themeColor} />}
+                  {bgUrl === bg.url && <Ionicons name="checkmark-circle" size={26} color={themeColor} />}
                 </View>
               </View>
             )}
@@ -106,7 +118,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: '#F8F9FA' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: bgUrl ? 'transparent' : colors.background }]}>
       {renderContent()}
     </SafeAreaView>
   );
@@ -136,14 +148,20 @@ const styles = StyleSheet.create({
   },
   section: {
     backgroundColor: 'rgba(255,255,255,0.95)',
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 24,
     marginBottom: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 15,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 8,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOpacity: 0.08,
+        shadowRadius: 15,
+        shadowOffset: { width: 0, height: 6 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   sectionTitle: {
     fontSize: 16,
@@ -151,37 +169,59 @@ const styles = StyleSheet.create({
     color: '#1A1A1A',
     marginBottom: 20,
   },
+  rowBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   colorRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 7,
+    gap: Platform.OS === 'android' ? 10 : 7,
   },
   colorCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 24,
+    width: Platform.OS === 'android' ? 46 : 40,
+    height: Platform.OS === 'android' ? 46 : 40,
+    borderRadius: Platform.OS === 'android' ? 23 : 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
   colorActive: {
     borderWidth: 3,
     borderColor: '#FFF',
-    shadowColor: '#000',
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOpacity: 0.4,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 4 },
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
   },
   bgCard: {
-    height: 85,
+    height: 90,
     marginBottom: 16,
-    borderRadius: 10,
+    borderRadius: 12,
     backgroundColor: '#333',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 3 },
+    overflow: 'hidden',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        shadowOffset: { width: 0, height: 3 },
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   bgPreview: {
     flex: 1,
@@ -194,7 +234,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    borderRadius: 8,
   },
   bgName: {
     color: '#FFF',
