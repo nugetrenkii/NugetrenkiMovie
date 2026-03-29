@@ -1,45 +1,51 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
+// Reactotron: chỉ khởi tạo khi đang ở chế độ debug
+if (__DEV__) {
+  require('./src/config/ReactotronConfig');
 }
 
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
+import React, { useEffect } from 'react';
+import { StatusBar } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import SplashScreen from 'react-native-splash-screen';
+import Orientation from 'react-native-orientation-locker';
+import AppNavigator from './src/navigation/AppNavigator';
+import { ThemeProvider } from './src/context/ThemeContext';
 
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
   },
 });
+
+const App = () => {
+  useEffect(() => {
+    try {
+      SplashScreen.hide();
+      // Luôn khóa màn hình theo chiều dọc cho toàn bộ ứng dụng
+      Orientation.lockToPortrait();
+    } catch (e) {
+      console.warn('React Native Orientation or Splash Screen is not yet configured on native side');
+    }
+  }, []);
+
+  return (
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
+          <StatusBar 
+            barStyle="dark-content" 
+            backgroundColor="transparent" 
+            translucent 
+          />
+          <AppNavigator />
+        </SafeAreaProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
+  );
+};
 
 export default App;
