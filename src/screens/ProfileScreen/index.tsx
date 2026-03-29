@@ -107,7 +107,7 @@ export default function ProfileScreen() {
     if (bgUrl === 'local-warrior-pink') bgSource = require('../../assets/images/custom-bg-4.jpg');
 
     return (
-      <ImageBackground source={bgSource} style={styles.container}>
+      <ImageBackground source={bgSource} style={styles.container} blurRadius={5}>
         <View style={styles.darkOverlay}>
           <SafeAreaView style={{ flex: 1 }}>
             {renderContent()}
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   },
   darkOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    // backgroundColor: 'rgba(0,0,0,0.6)',
   },
   scrollContent: {
     padding: 20,

@@ -99,7 +99,7 @@ const HomeScreen = ({ navigation }: any) => {
           </View>
         </View>
         <View style={styles.headerRight}>
-          <TouchableOpacity style={[styles.searchBtn, { backgroundColor: colors.headerSearch, padding: 8, borderRadius: 10 }]} onPress={() => navigation.navigate('Search')}>
+          <TouchableOpacity style={[styles.searchBtn, { backgroundColor: colors.headerSearch, padding: 8, borderRadius: 20 }]} onPress={() => navigation.navigate('Search')}>
             <Ionicons name="search-outline" size={24} color={isDarkMode ? '#FFF' : '#1A1A1A'} />
           </TouchableOpacity>
           {/* <Image source={{ uri: AVATAR }} style={styles.avatar} /> */}
@@ -242,9 +242,9 @@ const HomeScreen = ({ navigation }: any) => {
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hList}>
               {favorites.map((item: any, index: number) => (
-                <TouchableOpacity 
-                  key={item.slug} 
-                  style={[styles.watchedCard, index === 0 && { marginLeft: 20 }, { backgroundColor: colors.card, padding: 8, borderRadius: 16 }]} 
+                <TouchableOpacity
+                  key={item.slug}
+                  style={[styles.watchedCard, index === 0 && { marginLeft: 20 }, { backgroundColor: colors.card, padding: 8, borderRadius: 16 }]}
                   onPress={() => navigation.navigate('Detail', { slug: item.slug })}
                 >
                   <Image
@@ -272,9 +272,9 @@ const HomeScreen = ({ navigation }: any) => {
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hList}>
           {recentMovies.map((item: MovieItem, index: number) => (
-            <TouchableOpacity 
-              key={item._id} 
-              style={[styles.watchedCard, index === 0 && { marginLeft: 20 }, { backgroundColor: colors.card, padding: 8, borderRadius: 16 }]} 
+            <TouchableOpacity
+              key={item._id}
+              style={[styles.watchedCard, index === 0 && { marginLeft: 20 }, { backgroundColor: colors.card, padding: 8, borderRadius: 16 }]}
               onPress={() => navigation.navigate('Detail', { slug: item.slug })}
             >
               <Image
@@ -416,6 +416,7 @@ const styles = StyleSheet.create({
   },
   searchBtn: {
     marginRight: 16,
+    borderRadius: 10,
   },
   searchIcon: {
     fontSize: 18,
