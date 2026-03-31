@@ -7,7 +7,11 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "clean-a": "cd android && ./gradlew clean && cd ..",
+    "clean-i": "cd ios && rm -rf ios/Pods rm -rf ios/.xcode.env.local && rm -rf ios/Podfile.lock && cd ..",
+    "clean-cache": "yarn cache clean && rm -rf node_modules &&rm -f yarn.lock",
+    "pod": "yarn install && cd ios && pod install && cd .."
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.0.2",
