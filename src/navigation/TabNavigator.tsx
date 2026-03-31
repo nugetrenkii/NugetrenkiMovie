@@ -4,7 +4,11 @@ import { View, StyleSheet, Platform, ImageBackground, SafeAreaView } from 'react
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import FavoritesScreen from '../screens/FavoritesScreen';
+import AccountScreen from '../screens/AccountScreen';
+import LoginScreen from '../screens/Auth/LoginScreen';
 import { ThemeContext } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,6 +18,7 @@ type IconName = 'home' | 'home-outline' | 'heart' | 'heart-outline' | 'person-ci
 
 export default function TabNavigator() {
   const { themeColor, colors, isDarkMode } = React.useContext(ThemeContext);
+  const { user } = useAuth();
 
   return (
     <Tab.Navigator
@@ -30,6 +35,20 @@ export default function TabNavigator() {
         tabBarItemStyle: styles.tabBarItem,
       }}
     >
+      <Tab.Screen
+        name="FavoritesTab"
+        component={FavoritesScreen}
+        options={{
+          tabBarLabel: 'Yêu thích',
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons
+              name={focused ? 'heart' : 'heart-outline'}
+              size={22}
+              color={color}
+            />
+          ),
+        }}
+      />
       <Tab.Screen
         name="HomeTab"
         component={HomeScreen}
@@ -61,7 +80,7 @@ export default function TabNavigator() {
       /> */}
       <Tab.Screen
         name="ProfileTab"
-        component={ProfileScreen}
+        component={user ? AccountScreen : LoginScreen}
         options={{
           tabBarLabel: 'Profile',
           tabBarIcon: ({ focused, color, size }) => (

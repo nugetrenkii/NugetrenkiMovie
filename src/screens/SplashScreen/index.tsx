@@ -13,7 +13,7 @@ const SplashScreen = ({ navigation }: SplashScreenProps) => {
   useEffect(() => {
     Animated.timing(animatedWidth, {
       toValue: 100,
-      duration: 1000,
+      duration: 2500,
       useNativeDriver: false,
     }).start(({ finished }) => {
       if (finished) {

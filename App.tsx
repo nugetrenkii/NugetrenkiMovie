@@ -11,6 +11,7 @@ import SplashScreen from 'react-native-splash-screen';
 import Orientation from 'react-native-orientation-locker';
 import AppNavigator from './src/navigation/AppNavigator';
 import { ThemeProvider } from './src/context/ThemeContext';
+import { AuthProvider } from './src/context/AuthContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,16 +35,18 @@ const App = () => {
 
   return (
     <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <SafeAreaProvider>
-          <StatusBar 
-            barStyle="dark-content" 
-            backgroundColor="transparent" 
-            translucent 
-          />
-          <AppNavigator />
-        </SafeAreaProvider>
-      </QueryClientProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <SafeAreaProvider>
+            <StatusBar 
+              barStyle="dark-content" 
+              backgroundColor="transparent" 
+              translucent 
+            />
+            <AppNavigator />
+          </SafeAreaProvider>
+        </QueryClientProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 };

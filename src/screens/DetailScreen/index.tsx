@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { ThemeContext } from '../../context/ThemeContext';
 import { useGetMovieDetail } from '../../hooks/queries/useGetMovieDetail';
+import { syncManager } from '../../utils/syncManager';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const AVATAR = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop';
@@ -80,6 +81,7 @@ const DetailScreen = ({ route, navigation }: any) => {
         setIsFavorite(true);
       }
       await AsyncStorage.setItem('@favorite_list', JSON.stringify(favList));
+      syncManager.syncToCloud();
     } catch (e) { }
   };
 

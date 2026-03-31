@@ -10,6 +10,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { ThemeContext } from '../../context/ThemeContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useGetHomeMovies } from '../../hooks/queries/useGetHomeMovies';
+import { useAuth } from '../../context/AuthContext';
 import { MovieItem } from '../../types/movie';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -34,6 +35,7 @@ const HomeScreen = ({ navigation }: any) => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<any>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const { user, userAvatar } = useAuth();
 
   const { data, isLoading, error } = useGetHomeMovies();
 
@@ -102,7 +104,9 @@ const HomeScreen = ({ navigation }: any) => {
           <TouchableOpacity style={[styles.searchBtn, { backgroundColor: colors.headerSearch, padding: 8, borderRadius: 20 }]} onPress={() => navigation.navigate('Search')}>
             <Ionicons name="search-outline" size={24} color={isDarkMode ? '#FFF' : '#1A1A1A'} />
           </TouchableOpacity>
-          {/* <Image source={{ uri: AVATAR }} style={styles.avatar} /> */}
+          <TouchableOpacity onPress={() => navigation.navigate(user ? 'Account' : 'Login')}>
+            <Image source={{ uri: userAvatar || (user && user.photoURL ? user.photoURL : AVATAR) }} style={styles.avatar} />
+          </TouchableOpacity>
         </View>
       </View>
 

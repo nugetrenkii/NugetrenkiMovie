@@ -21,15 +21,20 @@ const BACKGROUNDS = [
   { id: 'bg4', url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=600&auto=format&fit=crop', name: 'Gradient Color' },
 ];
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }: any) {
   const { themeColor, changeThemeColor, bgUrl, changeBgUrl, isDarkMode, toggleDarkMode, colors } = useContext(ThemeContext);
+
 
   const renderContent = () => (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <Ionicons name="person-circle" size={100} color={themeColor} />
-        <Text style={[styles.userName, { color: isDarkMode ? colors.itemText : themeColor }]}>My Profile</Text>
+      <View style={styles.navHeader}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color={colors.text || (isDarkMode ? '#FFF' : '#1A1A1A')} />
+        </TouchableOpacity>
+        <Text style={[styles.navTitle, { color: colors.text || (isDarkMode ? '#FFF' : '#1A1A1A') }]}>Cài đặt ứng dụng</Text>
+        <View style={{ width: 40 }} />
       </View>
+
 
       <View style={[styles.section, { backgroundColor: colors.card }]}>
         <View style={styles.rowBetween}>
@@ -145,6 +150,24 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: '800',
     marginTop: 10,
+  },
+  navHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    marginTop: Platform.OS === 'android' ? 10 : 0,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  navTitle: {
+    fontSize: 20,
+    fontWeight: '800',
   },
   section: {
     backgroundColor: 'rgba(255,255,255,0.95)',

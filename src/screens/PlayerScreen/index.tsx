@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Orientation from 'react-native-orientation-locker';
 import { ThemeContext } from '../../context/ThemeContext';
 import { useGetMovieDetail } from '../../hooks/queries/useGetMovieDetail';
+import { syncManager } from '../../utils/syncManager';
 
 const formatTime = (seconds: number) => {
   if (isNaN(seconds) || seconds < 0) return '00:00';
@@ -269,6 +270,8 @@ const PlayerScreen = ({ route, navigation }: any) => {
                       });
                       // Giữ lại tối đa top 15 phim mới nhất
                       await AsyncStorage.setItem('@history_list', JSON.stringify(historyList.slice(0, 15)));
+                      // Đồng bộ nhanh tiến trình tập phim lên Firestore (không quét toàn bộ AsyncStorage)
+                      syncManager.syncProgressToCloud(slug, epIndex, data.currentTime);
                     }
                   } catch (e) { }
                 }
